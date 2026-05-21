@@ -14,6 +14,7 @@
 | [`officecli-chart-colors`](officecli-chart-colors/SKILL.md) | ~210 | 图表配色指南 — 27套专业色板 + 20种图表类型样式 |
 | [`officecli-docx-format`](officecli-docx-format/SKILL.md) | ~310 | 中文排版格式标准化 — 通用企业格式 + GB/T 9704-2012公文格式 |
 | [`officecli-thesis-workbench`](officecli-thesis-workbench/SKILL.md) | ~130 | 毕业论文工作台 — 四种DOCX交付路径 + 证据链 + 质量门禁 |
+| [`officecli-academic-research`](officecli-academic-research/SKILL.md) | ~230 | 学术研究全流程 — 四模块32+Agent，10阶段pipeline，学术诚信验证 |
 
 ## 技能内容
 
