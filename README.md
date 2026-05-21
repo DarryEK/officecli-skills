@@ -16,6 +16,9 @@
 | [`officecli-thesis-workbench`](officecli-thesis-workbench/SKILL.md) | ~130 | 毕业论文工作台 — 四种DOCX交付路径 + 证据链 + 质量门禁 |
 | [`officecli-academic-research`](officecli-academic-research/SKILL.md) | ~230 | 学术研究全流程 — 四模块32+Agent，10阶段pipeline，学术诚信验证 |
 | [`officecli-nature`](officecli-nature/SKILL.md) | ~300 | Nature 期刊级学术文档 — 论文PPT/手稿排版/图表规范/引用管理/润色 |
+| [`officecli-cnki`](officecli-cnki/SKILL.md) | ~210 | 知网学术检索 — 文献检索/引用导出/Excel 文献列表/参考文献排版 |
+| [`officecli-sciagent`](officecli-sciagent/SKILL.md) | ~280 | 科研智能体全家桶 — 197+138+8 生物信息学/科学计算/文献综述/科研写作技能 |
+| [`officecli-ppt-master`](officecli-ppt-master/SKILL.md) | ~220 | PPT Master 高质量 PPTX — 20+模板/SVG→DrawingML渲染/多源输入 |
 
 ## 技能内容
 
