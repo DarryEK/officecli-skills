@@ -416,12 +416,253 @@ officecli query "$FILE" 'cell:contains("TBD")'
 
 When building an Excel file that contains VBA macros (.xlsm), the build process alone cannot catch mismatches between Python layout code and VBA code. Common failure: VBA reads cell `B2` but data landed at `B4` after a layout change — invisible to `validate` and CLI output.
 
+This section provides both **VBA programming reference** for writing correct VBA code, and a **testing protocol** for verifying it works.
+
+#### VBA编程参考
+
+**1. VBA 基础与开发环境**
+
+VBA（Visual Basic for Applications）是微软的事件驱动编程语言，用于扩展和自动化 Excel 功能。启用开发者选项卡：文件 → 选项 → 自定义功能区 → 勾选"开发者"。进入开发者选项卡 → 点击 Visual Basic 进入 VBA 编辑器。
+
+VBA 编辑器提供项目资源管理器、代码窗口、属性窗口等工具，用于编写和调试代码。
+
+```vba
+' 验证环境配置的基础宏
+Sub HelloVBA()
+    Debug.Print "Hello, VBA!"   ' 在立即窗口输出
+End Sub
+```
+
+**2. VBA 代码结构与语法**
+
+**数据类型与变量声明：**
+
+```vba
+Dim i As Integer              ' 整型
+Dim l As Long                 ' 长整型
+Dim strName As String         ' 字符串
+Dim bFlag As Boolean          ' 布尔型
+Dim dblValue As Double        ' 双精度浮点
+Static j As Integer           ' 静态变量（调用间保持值）
+Public gblConfig As String    ' 全局变量（整个工程可访问）
+```
+
+变量作用域：`Dim`（局部）、`Static`（函数内静态）、`Public`（全局）。
+
+**控制结构：**
+
+```vba
+' If...Then...Else 条件判断
+If condition Then
+    ' 条件为真时执行
+Else
+    ' 条件为假时执行
+End If
+
+' For...Next 循环
+For i = 1 To 10
+    ' 循环体
+Next i
+
+' For Each 遍历集合
+For Each c In Range("A1:A10")
+    If c.Value > 50 Then
+        c.Interior.Color = RGB(0, 255, 0)
+    End If
+Next c
+```
+
+**数组：**
+
+```vba
+Dim arrNumbers(1 To 5) As Integer    ' 声明定长数组
+Dim arrDynamic() As String           ' 声明动态数组
+ReDim arrDynamic(1 To 10)            ' 调整动态数组大小
+
+For i = LBound(arrNumbers) To UBound(arrNumbers)
+    arrNumbers(i) = i
+Next i
+```
+
+**Sub 与 Function 的区别：**
+
+```vba
+' Sub 过程 — 执行任务，无返回值
+Sub SayHello()
+    MsgBox "Hello, World!"
+End Sub
+
+' Function 过程 — 执行任务并返回结果
+Function AddNumbers(num1 As Integer, num2 As Integer) As Integer
+    AddNumbers = num1 + num2
+End Function
+```
+
+**参数传递：** `ByVal`（值传递 — 副本，原值不变），`ByRef`（引用传递 — 修改原值，VBA 默认方式）。
+
+```vba
+Sub ModifyValue(ByVal value As Integer)
+    value = value + 1           ' 不影响 originalValue
+End Sub
+
+Sub ChangeValue(ByRef refValue As Integer)
+    refValue = refValue + 1     ' 影响 originalValue
+End Sub
+```
+
+**错误处理：**
+
+```vba
+Sub SafeProcedure()
+    On Error GoTo ErrorHandler
+    ' 危险代码
+    ' ...
+    Exit Sub                    ' 避免进入错误处理
+    
+ErrorHandler:
+    MsgBox "错误: " & Err.Description
+    Resume Next                 ' 继续下一行
+End Sub
+```
+
+`On Error Resume Next` — 跳过错误继续执行。`On Error GoTo 0` — 恢复正常错误处理。
+
+**3. 工作簿与工作表操作**
+
+```vba
+Dim wb As Workbook
+Set wb = Workbooks.Open("C:\path\to\workbook.xlsx")
+wb.Save
+wb.SaveAs "C:\path\to\new.xlsx"
+wb.Close
+
+' 工作表管理
+Dim ws As Worksheet
+Set ws = Worksheets.Add              ' 插入新工作表
+Worksheets("Sheet1").Delete          ' 删除
+Sheets("Sheet1").Copy Before:=newWorkbook.Sheets(1)  ' 复制
+
+' 保护
+Worksheets("Sheet1").Protect Password:="password"
+Worksheets("Sheet1").Unprotect Password:="password"
+wb.Protect Structure:=True           ' 保护工作簿结构
+```
+
+**4. 单元格与范围操作**
+
+```vba
+' 读写
+Dim v As Variant
+v = Range("A1").Value
+Range("A1").Value = "Hello World"
+
+' 排序与筛选
+Range("A1:B10").Sort Key1:=Range("A1"), Order1:=xlAscending, Header:=xlYes
+Range("A1:B10").AutoFilter Field:=1, Criteria1:="条件"
+
+' 单元格格式
+With Range("A1")
+    .Font.Bold = True
+    .Font.Size = 14
+    .Font.Color = RGB(0, 0, 255)        ' 蓝色
+    .Interior.Color = RGB(255, 255, 0)  ' 黄色填充
+    .NumberFormat = "$#,##0.00"         ' 数字格式
+End With
+```
+
+**Excel 函数在 VBA 中使用：**
+
+```vba
+Dim sumVal As Double
+sumVal = Application.WorksheetFunction.Sum(Range("A1:A10"))
+Range("B1").Value = sumVal
+```
+
+**自定义函数 (UDF)：**
+
+```vba
+Function AddTwoNumbers(num1 As Double, num2 As Double) As Double
+    AddTwoNumbers = num1 + num2
+End Function
+
+' 带错误处理的 UDF
+Function DivideSafe(num1 As Double, num2 As Double) As Variant
+    On Error GoTo ErrHandler
+    DivideSafe = num1 / num2
+    Exit Function
+ErrHandler:
+    DivideSafe = "错误: " & Err.Description
+End Function
+```
+
+**数据验证：**
+
+```vba
+With Range("B1:B10")
+    .Validation.Delete
+    .Validation.Add Type:=xlValidateWholeNumber, _
+        AlertStyle:=xlValidAlertStop, _
+        Operator:=xlBetween, _
+        Formula1:="1", Formula2:="10"
+End With
+```
+
+**5. 事件编程**
+
+```vba
+' 工作簿打开事件 — 在 ThisWorkbook 模块中
+Private Sub Workbook_Open()
+    Application.ScreenUpdating = False
+    ' 初始化设置
+    Application.ScreenUpdating = True
+End Sub
+
+' 工作表变更事件 — 在 Sheet 模块中
+Private Sub Worksheet_Change(ByVal Target As Range)
+    If Not Intersect(Target, Range("A1:B10")) Is Nothing Then
+        ' 数据验证或自动计算
+    End If
+End Sub
+
+' 选区变化事件
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    ' 根据选区位置提供操作提示
+End Sub
+
+' 关闭前事件
+Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    ' 清理临时文件，确认保存
+End Sub
+```
+
+**6. 宏录制与安全**
+
+录制宏：开发工具 → 录制宏 → 执行操作 → 停止录制。录制的宏可以分配快捷键。
+
+宏安全设置：仅从可信来源打开含宏的工作簿；保持"禁用所有宏并通知"状态；使用数字签名对宏签名。
+
+**7. VBA 外部程序交互**
+
+```vba
+Sub LaunchNotepad()
+    Dim shell As Object
+    Set shell = CreateObject("WScript.Shell")
+    shell.Run "notepad.exe"
+End Sub
+```
+
+#### .xlsm 构建后测试协议
+
+When building an Excel file that contains VBA macros (.xlsm), the build process alone cannot catch mismatches between Python layout code and VBA code. Common failure: VBA reads cell `B2` but data landed at `B4` after a layout change — invisible to `validate` and CLI output.
+
 After every .xlsm build, before reporting done:
 
 1. **Open the saved .xlsm file** in Excel (enable macros when prompted).
 2. **Run every primary macro** end-to-end — trigger each button, shortcut, or auto-run macro the user will invoke.
 3. **Verify the output** — check that macros read from and write to the correct cells, ranges match the intended layout, and no `#REF!` errors appear at runtime.
-4. If the build process itself runs Excel hidden (e.g., via COM automation or a headless runner), the test step still needs to **open the final saved file** and verify.
+4. **Check formula outputs** — after macros run, sample 2-3 computed cells to confirm cached values cached values are plausible and formula references (`Sheet1!A1`) contain no shell-corrupted `\!`.
+5. **Event validation** — trigger relevant events (change a cell, select different range) and verify any `Worksheet_Change` / `SelectionChange` handlers fire without error.
+6. If the build process itself runs Excel hidden (e.g., via COM automation or a headless runner), the test step still needs to **open the final saved file** and verify.
 
 This step catches cell-reference drift that no CLI check can detect.
 
