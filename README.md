@@ -6,11 +6,12 @@
 
 | 技能 | SKILL.md 行数 | 说明 |
 |------|--------------|------|
-| [`officecli-xlsx`](officecli-xlsx/SKILL.md) | ~500 | Excel 电子表格 — 创建/编辑/格式化/图表/数据透视表 |
+| [`officecli-xlsx`](officecli-xlsx/SKILL.md) | ~740 | Excel 电子表格 — 创建/编辑/格式化/图表/数据透视表/VBA |
 | [`officecli-docx`](officecli-docx/SKILL.md) | ~662 | Word 文档 — 标题层级/表格/页眉页脚/目录/域字段 |
 | [`officecli-pptx`](officecli-pptx/SKILL.md) | ~587 | PowerPoint 演示文稿 — 幻灯片/图表/动画/连线图 |
 | [`officecli-data-dashboard`](officecli-data-dashboard/SKILL.md) | ~409 | 数据仪表盘 — KPI 卡片/图表/迷你图/条件格式 |
 | [`officecli-financial-model`](officecli-financial-model/SKILL.md) | ~562 | 金融模型 — 三表模型/DCF/LBO/敏感度分析 |
+| [`officecli-chart-colors`](officecli-chart-colors/SKILL.md) | ~210 | 图表配色指南 — 27套专业色板 + 20种图表类型样式 |
 
 ## 技能内容
 

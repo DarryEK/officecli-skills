@@ -295,6 +295,8 @@ officecli adds extended chart types the classic Excel object model lacks: `boxWh
 
 **NEVER put unreplaced template tokens in chart title / series name / legend / axis title.** `$fy$24`, `{var}`, `<TODO>`, `$VAR`, `{{placeholder}}` render **literally** in the legend — validate passes, but a CFO sees `$fy$24` where "FY2024" should be. Always bind to final text or a cell reference (`title="FY2024 Revenue"` or `series1.name="Sheet1!A1"`).
 
+**Colors — 27套专业色板可用。**  chart `--prop colors` 接受逗号分隔的十六进制色值（不带 `#`）。需要商务/莫兰迪/工业/学术/暗色大屏配色方案时，参见 [`officecli-chart-colors`](../officecli-chart-colors/SKILL.md) 技能，内置27套精选色板 + OfficeCLI `colors` 属性完整用例。
+
 ### Conditional formatting
 
 Three common flavors, each with its own prop shape (consult `officecli help xlsx cf`):
